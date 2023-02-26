@@ -29,3 +29,28 @@ type TaskEvent struct {
 	Timestamp time.Time
 	Task      Task
 }
+
+type Config struct {
+	Name          string
+	AttachStdin   bool
+	AttachStdout  bool
+	AttachStderr  bool
+	Cmd           []string
+	Image         string
+	Memory        int64
+	Disk          int64
+	Env           []string
+	RestartPolicy string
+}
+
+type Docker struct {
+	Client *client.Client
+	Config Config
+}
+
+type DockerResult struct {
+	Error       error
+	Action      string
+	ContainerId string
+	Result      string
+}
