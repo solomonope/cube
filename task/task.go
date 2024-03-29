@@ -5,6 +5,7 @@ import (
 
 	"github.com/docker/go-connections/nat"
 	"github.com/google/uuid"
+	"github.com/moby/moby/client"
 	"github.com/solomonope/cube/job"
 )
 
