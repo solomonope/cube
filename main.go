@@ -85,8 +85,8 @@ func main() {
 
 	m := manager.Manager{
 		Pending: *queue.New(),
-		TaskDb:  make(map[string][]task.Task),
-		EventDb: make(map[string][]task.TaskEvent),
+		TaskDb:  make(map[string][]*task.Task),
+		EventDb: make(map[string][]*task.TaskEvent),
 		Workers: []string{w.Name},
 	}
 
@@ -108,9 +108,13 @@ func main() {
 
 	fmt.Printf("create a test container\n")
 
-	_, createResult := createContainer()
+	d, createResult := createContainer()
 	if createResult.Error != nil {
 		fmt.Printf("%v", createResult.Error)
 		os.Exit(1)
 	}
+
+	time.Sleep(time.Second * 5)
+	fmt.Println("Killing Container")
+	stopContainer(d, createResult.ContainerId)
 }
