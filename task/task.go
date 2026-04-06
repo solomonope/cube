@@ -13,7 +13,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/moby/moby/api/types"
 	"github.com/moby/moby/client"
-	"github.com/solomonope/cube/job"
 )
 
 type State int
@@ -25,6 +24,14 @@ const (
 	Completed
 	Failed
 )
+
+var stateMap = map[State][]State{
+	Pending:   []State{Scheduled},
+	Scheduled: []State{Scheduled, Running, Failed},
+	Running:   []State{Running, Completed, Failed},
+	Completed: []State{},
+	Failed:    []State{},
+}
 
 type Task struct {
 	ID            uuid.UUID
@@ -45,7 +52,7 @@ type Task struct {
 
 type TaskEvent struct {
 	ID        uuid.UUID
-	State     job.State
+	State     State
 	Timestamp time.Time
 	Task      Task
 }
@@ -79,6 +86,19 @@ type DockerResult struct {
 	Action      string
 	ContainerId string
 	Result      string
+}
+
+func contains(states []State, state State) bool {
+	for _, s := range states {
+		if s == state {
+			return true
+		}
+	}
+	return false
+}
+
+func ValidateStateTransition(src, dst State) bool {
+	return contains(stateMap[src], dst)
 }
 
 func NewConfig(t *Task) Config {
